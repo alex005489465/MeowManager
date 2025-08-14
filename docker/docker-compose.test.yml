@@ -1,0 +1,88 @@
+services:
+  # MySQL Database Service for Testing
+  mysql:
+    image: mysql:8.4.5
+    container_name: meow-mysql-test
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: meow_db
+      MYSQL_USER: meow_user
+      MYSQL_PASSWORD: meow_password
+      TZ: Asia/Taipei
+    ports:
+      - "30315:3306"
+    volumes:
+      - mysql-test-data:/var/lib/mysql
+      - ./MySQL/init:/docker-entrypoint-initdb.d:ro
+      - ../../db/最新版:/var/lib/mysql-files:ro
+    networks:
+      - meow-test-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # phpMyAdmin Service for Testing
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.2
+    container_name: meow-phpmyadmin-test
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+    ports:
+      - "30317:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - meow-test-network
+
+  # ERP Backend Service for Testing
+  erp-backend:
+    build:
+      context: ../src/erp
+      dockerfile: Dockerfile
+    container_name: meow-erp-backend-test
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_OPTS: "-Xms256m -Xmx512m -XX:+UseG1GC"
+    ports:
+      - "30318:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - meow-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Redis Service for Testing
+  # redis:
+  #   image: redis:7.4.5
+  #   container_name: meow-redis-test
+  #   restart: unless-stopped
+  #   ports:
+  #     - "30319:6379"
+  #   volumes:
+  #     - redis-test-data:/data
+  #   networks:
+  #     - meow-test-network
+
+networks:
+  meow-test-network:
+    driver: bridge
+
+volumes:
+  mysql-test-data:
+  # redis-test-data:

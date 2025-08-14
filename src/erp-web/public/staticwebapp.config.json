@@ -1,0 +1,43 @@
+{
+  "routes": [
+    {
+      "route": "/api/*",
+      "allowedRoles": ["anonymous"],
+      "rewrite": "/api/{*}"
+    },
+    {
+      "route": "/assets/*",
+      "headers": {
+        "cache-control": "max-age=31536000"
+      }
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/api/*", "/assets/*", "/*.{css,scss,js,png,gif,ico,jpg,svg,woff,woff2,ttf,eot}"]
+  },
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/index.html"
+    }
+  },
+  "mimeTypes": {
+    ".css": "text/css",
+    ".js": "application/javascript",
+    ".json": "application/json",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".gif": "image/gif",
+    ".ico": "image/x-icon",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2"
+  },
+  "globalHeaders": {
+    "content-security-policy": "default-src https: http: 'unsafe-eval' 'unsafe-inline'; connect-src https: http: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+  },
+  "forwardingGateway": {
+    "allowedForwardedHosts": ["kind-rock-07442091e.2.azurestaticapps.net"],
+    "requiredHeaders": {}
+  }
+}

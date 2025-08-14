@@ -1,0 +1,14 @@
+# Exclude development/runtime files that shouldn't be in container build context
+#docker/
+.git/
+.gitignore
+node_modules/
+*.log
+.env
+.env.local
+target/
+dist/
+build/
+*.sock
+*.pid
+*.tmp

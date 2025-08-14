@@ -1,0 +1,15 @@
+# ignore at main branch
+ ./infra/aws
+ ./infra/azure
+ ./docs/開發文件/*
+ ./docs/參考文件/*
+
+# Docker data
+docker/MySQL/data
+docker/redis/data
+docker/docker-images
+
+# project files
+./.idea
+./.vscode
+.azcli

@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: erp
+
+  # Database Configuration (MySQL in Docker)
+  datasource:
+    url: jdbc:mysql://mysql:3306/meow_db?useSSL=false&serverTimezone=Asia/Taipei&allowPublicKeyRetrieval=true
+    username: meow_user
+    password: meow_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA/Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    open-in-view: false
+
+  # Redis Configuration (暫時註解掉)
+  # data:
+  #   redis:
+  #     host: redis
+  #     port: 6379
+  #     timeout: 2000ms
+  #     lettuce:
+  #       pool:
+  #         max-active: 8
+  #         max-idle: 8
+  #         min-idle: 0
+
+# Server Configuration
+server:
+  port: 8080
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    try-it-out-enabled: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+  packages-to-scan: erp
+  paths-to-match: /api/**
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    erp: INFO
+    erp.core.interceptor.RequestResponseLoggingInterceptor: INFO
+    erp.core.filter.ContentCachingFilter: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
